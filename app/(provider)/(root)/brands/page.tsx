@@ -2,23 +2,27 @@
 import axios from 'axios';
 import Link from 'next/link';
 
+interface Props {
+    searchParams: {
+      brandId: string;
+    };
+  }
 
-export default async function BrandPage(props) {
+
+export default async function BrandPage({searchParams}: Props) {
     const res = await axios.get('https://api.ballang.yoojinyoung.com/products')
     const products = await res.data;
     
+
 
     const result = await axios.get('https://api.ballang.yoojinyoung.com/brands')
     const brands =  result.data;
     
 
 
-    
-    const result2 = await axios.get(`https://api.ballang.yoojinyoung.com/brands/`)
-    const brandData =  result2.data;
-    console.log(brandData);
-
-    console.log("asdasd" , props)
+    const selectedBrandId = Number(searchParams.brandId);
+    // const result2 = await axios.get(`https://api.ballang.yoojinyoung.com/brands/${selectedBrandId}`)
+    // const brandData =  result2.data;
     
 
 
@@ -42,8 +46,11 @@ export default async function BrandPage(props) {
     </ul>
     </nav>
     <ul className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-x-8 gap-y-12'>
-    {products.result.map((product) => (
-         <li key={product.brandid}>
+    {products.result.filter((product) => 
+        !selectedBrandId || product.brand.id === selectedBrandId
+            )
+        .map((product) => (
+         <li key={product.id}>
          <Link className="relative flex flex-col group" href="#">
          <div className="relative mb-4 w-full aspect-square">
            <img src={product.imgSrc} className=" h-full w-full" />
@@ -60,6 +67,7 @@ export default async function BrandPage(props) {
            </Link>
        </li>
     ))}
+    {/* 맵 여기서 끝 */}
 
 
 
